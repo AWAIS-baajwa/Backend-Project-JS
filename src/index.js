@@ -9,7 +9,19 @@ dontenv.config({
   path: "./env",
 });
 
-connectDb();
+connectDb()
+  .then(() => {
+    app.on("error", (error) => {
+      console.log("Error", error);
+      throw error;
+    });
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is listning at ${process.env.PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log("mongoDb connection failed !!!", error);
+  });
 // (async () => {
 //   try {
 //     await mongoose.connect(`${process.env.MONGODB_URI} / ${DB_NAME}`);
