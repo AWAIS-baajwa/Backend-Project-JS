@@ -3,7 +3,8 @@ import express from "express";
 import dontenv from "dotenv";
 import { DB_NAME } from "./constant.js";
 import connectDb from "./db/index.js";
-const app = express();
+import { app } from "./app.js";
+// app = express();
 
 dontenv.config({
   path: "./env",
