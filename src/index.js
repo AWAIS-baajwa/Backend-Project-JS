@@ -4,10 +4,10 @@ import dontenv from "dotenv";
 import { DB_NAME } from "./constant.js";
 import connectDb from "./db/index.js";
 import { app } from "./app.js";
-// app = express();
+// app = express()
 
 dontenv.config({
-  path: "./env",
+  path: "./.env",
 });
 
 connectDb()
