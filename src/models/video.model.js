@@ -4,11 +4,11 @@ import { User } from "./user.model";
 const videoSchema = Schema(
   {
     videoFile: {
-      type: String,
+      type: String, //cloudinary url
       required: true,
     },
     thumbnail: {
-      type: String,
+      type: String, //cloudinary url
       required: true,
     },
     owner: {
