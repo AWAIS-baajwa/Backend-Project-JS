@@ -240,7 +240,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     }
   ).select("-password");
 
-  if (!user) throw new ApiError(500, "Somthing wrong happend");
+  if (!user) throw new ApiError(500, "Something went wrong");
 
   return res
     .status(200)
@@ -250,10 +250,10 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 const updateAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
   if (!avatarLocalPath) throw new ApiError(400, "Avatar file is missing");
-
+  // uploading image on cloudinary
   const avatar = await uploadOncloudinary(avatarLocalPath);
   if (!avatar.url) throw new ApiError(400, "Error while uploading avatar");
-
+  const oldAvatarImageUrl = req.user?.avatar.split("/");
   const user = User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -265,7 +265,16 @@ const updateAvatar = asyncHandler(async (req, res) => {
       new: true,
     }
   ).select("-password");
-
+  if (!user) throw new ApiError(400, "Unauthorized request");
+  // extracting public id from url as it is present in last index and removing extention from url
+  const avatarImageOldPublic_id = oldAvatarImageUrl[
+    oldAvatarImageUrl.length - 1
+  ].slice(0, oldAvatarImageUrl[oldAvatarImageUrl.length - 1].length - 4);
+  // deleting old image
+  const isDeleted = await deleteFromCloudinary(avatarImageOldPublic_id);
+  // checking that is it deleted or not
+  if (isDeleted.result !== "ok")
+    throw new ApiError(400, "Something went wrong while deleting old image");
   return res
     .status(200)
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
